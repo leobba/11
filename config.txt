@@ -5,7 +5,7 @@
 # 公众号appSecret
 "app_secret": "a125279c48d2080b4eee481060269257",
 # 模板消息id
-"template_id": "Bqwt7XNiXzpiAV8LdWjGOTTVCv0zfCZJpZ0Q1PPHufk",
+"template_id": "ouwxeAt7d-jKtHBYvjSDKov4WFe8eez5Rl4_WcbBDrs",
 # 接收公众号消息的微信号，如果有多个，需要在[]里用英文逗号间隔，例如["wx1", "wx2"]
 "user": ["ofiCo6i7m-1EYCDf8PVnEefQxS3o","ofiCo6jJVGtxzIYL9aE3weK_Gk78"],
  
@@ -21,7 +21,7 @@
 # 在一起的日子，格式同上，暂不不支持农历
 "love_date": "2025-02-22",
 # 金句中文，如果设置了，则会显示这里的，如果为空，默认会读取金山的每日金句
-"note_ch": "",
+"note_ch": "一切都会过去，时间会证明一切",
 # 金句英文
 "note_en": ""
 }
