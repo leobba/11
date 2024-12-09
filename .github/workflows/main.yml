@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
   schedule: 
     # 代表国际标准时间23点0分，北京时间需要+8小时，代表北京时间上午7点运行
-    - cron: '0 23 * * *'
+    - cron: '15 23 * * *'
+    - cron: '0 4 * * *'
+    - cron: '15 9 * * *'
 
 jobs:
   build:
