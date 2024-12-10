@@ -2,7 +2,7 @@ import random
 from requests import get, post
 import sys
 import os
-import json
+from datetime import datetime, date
 
 def get_color():
     # 获取随机颜色
@@ -26,7 +26,6 @@ def get_access_token():
     return access_token
 
 def get_weather():
-    # 获取天气信息
     weather_url = "https://aider.meizu.com/app/weather/listWeather?cityIds=101100301"
     try:
         response = get(weather_url).json()
@@ -47,13 +46,30 @@ def get_weather():
             "wind": realtime["wD"] + realtime["wS"],
             "gm_index": gm_index["content"] if gm_index else "",
             "ct_index": ct_index["content"] if ct_index else "",
-            "feel_temp": realtime["sendibleTemp"] + "°C"  # 体感温度
+            "feel_temp": realtime["sendibleTemp"] + "°C"
         }
     except Exception as e:
         print(f"获取天气信息失败：{str(e)}")
         return None
 
-def send_message(to_user, access_token, region_name, note_ch, note_en):
+def get_countdown_days():
+    today = date.today()
+    countdown_days = {}
+    
+    # 处理倒计时日期
+    for key, value in config.items():
+        if key.startswith("countdown_"):
+            target_date = datetime.strptime(value["date"], "%Y-%m-%d").date()
+            days = (target_date - today).days
+            if days >= 0:
+                countdown_days[key] = {
+                    "name": value["name"],
+                    "days": days
+                }
+    
+    return countdown_days
+
+def send_message(to_user, access_token, region_name):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     
     # 获取天气信息
@@ -61,6 +77,9 @@ def send_message(to_user, access_token, region_name, note_ch, note_en):
     if not weather_info:
         print("未能获取天气信息")
         return
+    
+    # 获取倒计时信息
+    countdown_info = get_countdown_days()
     
     data = {
         "touser": to_user,
@@ -95,17 +114,16 @@ def send_message(to_user, access_token, region_name, note_ch, note_en):
             "ct_index": {
                 "value": weather_info["ct_index"],
                 "color": get_color()
-            },
-            "note_en": {
-                "value": note_en if note_en else "Have a nice day!",
-                "color": get_color()
-            },
-            "note_ch": {
-                "value": note_ch if note_ch else "祝你今天开心！",
-                "color": get_color()
             }
         }
     }
+    
+    # 添加倒计时数据
+    for key, value in countdown_info.items():
+        data["data"][key] = {
+            "value": f"距离{value['name']}还有{value['days']}天",
+            "color": get_color()
+        }
     
     headers = {
         'Content-Type': 'application/json',
@@ -127,27 +145,21 @@ def send_message(to_user, access_token, region_name, note_ch, note_en):
 
 if __name__ == "__main__":
     try:
-        with open("config.json", encoding="utf-8") as f:
-            config = json.loads(f.read())
+        with open("config.txt", encoding="utf-8") as f:
+            config = eval(f.read())
     except FileNotFoundError:
-        print("推送消息失败，请检查config.json文件是否与程序位于同一路径")
+        print("推送消息失败，请检查config.txt文件是否与程序位于同一路径")
         os.system("pause")
         sys.exit(1)
-    except json.JSONDecodeError:
+    except SyntaxError:
         print("推送消息失败，请检查配置文件格式是否正确")
         os.system("pause")
         sys.exit(1)
 
-    # 获取accessToken
     accessToken = get_access_token()
-    # 接收的用户
     users = config["user"]
-    # 地区
     region = config["region"]
-    # 获取自定义消息
-    note_ch = config["note_ch"]
-    note_en = config["note_en"]
     
     # 公众号推送消息
     for user in users:
-        send_message(user, accessToken, region, note_ch, note_en)
+        send_message(user, accessToken, region)
