@@ -7,7 +7,7 @@
 # 模板消息id
 "template_id": "lJiUQLEFQBFnboYm2FDP8QFJHVxLY7B6fn8MGx1KO4g",
 # 接收公众号消息的微信号
-"user": ["ofiCo6i7m-1EYCDf8PVnEefQxS3o"],
+"user": ["ofiCo6i7m-1EYCDf8PVnEefQxS3o","ofiCo6jJVGtxzIYL9aE3weK_Gk78"],
 # 地区
 "region": "阳泉市",
 # 倒计时配置
